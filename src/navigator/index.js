@@ -63,17 +63,56 @@ const BottomTabNavigator = createBottomTabNavigator(
 );
 
 // Todo: 没有设置 safearea
-const MaterialTopTavNavigator = createMaterialTopTabNavigator({
-  Page1: {
-    screen: Page1,
+const MaterialTopTavNavigator = createMaterialTopTabNavigator(
+  {
+    Page1: {
+      screen: Page1,
+      navigationOptions: {
+        tabBarLabel: "Home",
+        tabBarIcon: ({focused, horizontal, tintColor}) => {
+          return (
+            <Ionicons name="ios-home" size={26} style={{color: tintColor}} />
+          );
+        }, 
+      }
+    },
+    Page2: {
+      screen: Page2,
+      navigationOptions: {
+        tabBarLabel: 'People',
+        tabBarIcon: ({focused, horizontal, tintColor}) => {
+          return (
+            <Ionicons name="ios-people" size={26} style={{color: tintColor}} />
+          );
+        },
+      }
+    },
+    Page3: {
+      screen: Page3,
+      navigationOptions: {
+        tabBarLabel: 'Sport',
+        tabBarIcon: ({focused, horizontal, tintColor}) => {
+          return (
+            <Ionicons name="ios-bicycle" size={26} style={{color: tintColor}} />
+          );
+        },
+      }
+    },
   },
-  Page2: {
-    screen: Page2,
+  {
+    tabBarOptions: {
+      activeTintColor: 'yellow',
+      inactiveTintColor: "#fff",
+      upperCaseLabel: false,
+      labelStyle: {
+        fontSize: 24
+      },
+      tabStyle: {
+        // backgroundColor: "black"
+      }
+    },
   },
-  Page3: {
-    screen: Page3,
-  },
-});
+);
 
 const StackNavigator = createStackNavigator({
   HomePage: HomePage,
@@ -85,9 +124,7 @@ const StackNavigator = createStackNavigator({
   },
   MaterialTopTab: {
     screen: MaterialTopTavNavigator,
-    navigationOptions: {
-      header: null,
-    },
+    navigationOptions: {},
   },
 });
 
