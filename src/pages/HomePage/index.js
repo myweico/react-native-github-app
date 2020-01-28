@@ -20,6 +20,13 @@ export default class HomePage extends Component {
             navigate('MaterialTopTab');
           }}
           style={{marginTop: 10}}></Button>
+
+        <Button
+          title="To Login"
+          onPress={() => {
+            navigate('Auth');
+          }}
+          style={{marginTop: 10}}></Button>
       </View>
     );
   }

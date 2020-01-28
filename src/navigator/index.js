@@ -8,7 +8,9 @@ import HomePage from '../pages/HomePage';
 import Page1 from '../pages/Page1';
 import Page2 from '../pages/Page2';
 import Page3 from '../pages/Page3';
+import AuthScreen from '../pages/Auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {createSwitchNavigator} from 'react-navigation';
 
 const BottomTabNavigator = createBottomTabNavigator(
   {
@@ -68,13 +70,13 @@ const MaterialTopTavNavigator = createMaterialTopTabNavigator(
     Page1: {
       screen: Page1,
       navigationOptions: {
-        tabBarLabel: "Home",
+        tabBarLabel: 'Home',
         tabBarIcon: ({focused, horizontal, tintColor}) => {
           return (
             <Ionicons name="ios-home" size={26} style={{color: tintColor}} />
           );
-        }, 
-      }
+        },
+      },
     },
     Page2: {
       screen: Page2,
@@ -85,7 +87,7 @@ const MaterialTopTavNavigator = createMaterialTopTabNavigator(
             <Ionicons name="ios-people" size={26} style={{color: tintColor}} />
           );
         },
-      }
+      },
     },
     Page3: {
       screen: Page3,
@@ -96,25 +98,29 @@ const MaterialTopTavNavigator = createMaterialTopTabNavigator(
             <Ionicons name="ios-bicycle" size={26} style={{color: tintColor}} />
           );
         },
-      }
+      },
     },
   },
   {
     tabBarOptions: {
       activeTintColor: 'yellow',
-      inactiveTintColor: "#fff",
+      inactiveTintColor: '#fff',
       upperCaseLabel: false,
       labelStyle: {
-        fontSize: 24
+        fontSize: 24,
       },
       tabStyle: {
         // backgroundColor: "black"
-      }
+      },
     },
   },
 );
 
-const StackNavigator = createStackNavigator({
+const AuthNavigator = createStackNavigator({
+  Login: AuthScreen,
+});
+
+const MainStackNavigator = createStackNavigator({
   HomePage: HomePage,
   BottomTab: {
     screen: BottomTabNavigator,
@@ -128,4 +134,14 @@ const StackNavigator = createStackNavigator({
   },
 });
 
-export default StackNavigator;
+const SwitchNavigator = createSwitchNavigator(
+  {
+    Auth: AuthNavigator,
+    Main: MainStackNavigator,
+  },
+  {
+    headerMode: 'none',
+  },
+);
+
+export default SwitchNavigator;
