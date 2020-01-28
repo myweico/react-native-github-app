@@ -22,6 +22,13 @@ export default class HomePage extends Component {
           style={{marginTop: 10}}></Button>
 
         <Button
+          title="To DrawerNav"
+          onPress={() => {
+            navigate('Drawer');
+          }}
+          style={{marginTop: 10}}></Button>
+
+        <Button
           title="To Login"
           onPress={() => {
             navigate('Auth');

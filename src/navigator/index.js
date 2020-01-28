@@ -8,9 +8,17 @@ import HomePage from '../pages/HomePage';
 import Page1 from '../pages/Page1';
 import Page2 from '../pages/Page2';
 import Page3 from '../pages/Page3';
+import Page4 from '../pages/Page4';
+import Page5 from '../pages/Page5';
 import AuthScreen from '../pages/Auth';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {createSwitchNavigator} from 'react-navigation';
+import {createSwitchNavigator, SafeAreaView} from 'react-navigation';
+import {
+  createDrawerNavigator,
+  DrawerNavigatorItems,
+} from 'react-navigation-drawer';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import {ScrollView} from 'react-native-gesture-handler';
 
 const BottomTabNavigator = createBottomTabNavigator(
   {
@@ -61,6 +69,42 @@ const BottomTabNavigator = createBottomTabNavigator(
     navigationOptions: {
       tabBarLabel: 'Home!',
     },
+  },
+);
+
+const DrawerNavigator = createDrawerNavigator(
+  {
+    Page4: {
+      screen: Page4,
+      navigationOptions: {
+        drawerLabel: 'Bugs',
+        drawerIcon: ({tintColor, focused}) => (
+          <MaterialIcons
+            name="bug-report"
+            size={24}
+            style={{color: tintColor}}
+          />
+        ),
+      },
+    },
+    Page5: {
+      screen: Page5,
+      navigationOptions: {
+        drawerLabel: 'Build',
+        drawerIcon: ({tintColor, focused}) => (
+          <MaterialIcons name="build" size={24} style={{color: tintColor}} />
+        ),
+      },
+    },
+  },
+  {
+    contentComponent: props => (
+      <ScrollView style={{backgroundColor: '#7dfaa3', flex: 1}}>
+        <SafeAreaView forceInset={{top: 'always'}}>
+          <DrawerNavigatorItems {...props}></DrawerNavigatorItems>
+        </SafeAreaView>
+      </ScrollView>
+    ),
   },
 );
 
@@ -138,6 +182,7 @@ const SwitchNavigator = createSwitchNavigator(
   {
     Auth: AuthNavigator,
     Main: MainStackNavigator,
+    Drawer: DrawerNavigator,
   },
   {
     headerMode: 'none',

@@ -10,6 +10,12 @@ export default class Auth extends Component {
           onPress={() => {
             this.props.navigation.navigate('Main');
           }}></Button>
+
+        <Button
+          title="To Drawer"
+          onPress={() => {
+            this.props.navigation.navigate('Drawer');
+          }}></Button>
       </View>
     );
   }
