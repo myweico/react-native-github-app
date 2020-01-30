@@ -105,6 +105,10 @@ const DrawerNavigator = createDrawerNavigator(
         </SafeAreaView>
       </ScrollView>
     ),
+    drawerBackgroundColor: "blue",
+    drawerPosition: "right",
+    drawerWidth: "75%",
+    hideStatusBar: true
   },
 );
 
