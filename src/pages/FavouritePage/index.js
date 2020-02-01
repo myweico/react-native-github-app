@@ -4,10 +4,20 @@ import {View, Text, Button, StyleSheet} from 'react-native';
 export default class HomePage extends Component {
   render() {
     const {navigation} = this.props;
-    const {navigate} = navigation;
+    const {navigate, setParams} = navigation;
     return (
       <View style={styles.container}>
         <Text>收藏页</Text>
+        <Button
+          title="改变主题"
+          onPress={() => {
+            setParams({
+              theme: {
+                tintColor: 'orange',
+                updateTime: new Date().getTime(),
+              },
+            });
+          }}></Button>
       </View>
     );
   }

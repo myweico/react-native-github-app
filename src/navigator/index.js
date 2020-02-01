@@ -88,7 +88,7 @@ const MainStackNavigator = createStackNavigator({
   HomePage: {
     screen: HomePage,
     navigationOptions: {
-      header: null,
+      headerShown: false,
     },
   },
 });
