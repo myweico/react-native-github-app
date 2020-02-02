@@ -10,6 +10,7 @@ import WelcomeScreen from '../pages/WelcomePage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomePage from '../pages/HomePage';
+import DetailScreen from '../pages/DetailPage';
 
 // const BottomTabBarNavigator = createBottomTabNavigator(
 //   {
@@ -90,6 +91,9 @@ const MainStackNavigator = createStackNavigator({
     navigationOptions: {
       headerShown: false,
     },
+  },
+  DetailPage: {
+    screen: DetailScreen,
   },
 });
 

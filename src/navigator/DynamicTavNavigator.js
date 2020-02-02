@@ -112,8 +112,6 @@ class TabBarComponent extends Component {
         this.theme = theme;
       }
     }
-
-    console.log(this.props.navigation);
     return (
       <BottomTabBar
         {...this.props}
