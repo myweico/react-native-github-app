@@ -11,6 +11,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import HomePage from '../pages/HomePage';
 import DetailScreen from '../pages/DetailPage';
+import AsyncStorageDemo from '../pages/AsyncStorageDemo';
+import DataStoreScreen from '../pages/LocalFirstStoreDemo';
 
 // const BottomTabBarNavigator = createBottomTabNavigator(
 //   {
@@ -95,6 +97,12 @@ const MainStackNavigator = createStackNavigator({
   DetailPage: {
     screen: DetailScreen,
   },
+  AsyncStorageDemo: {
+    screen: AsyncStorageDemo
+  },
+  DataStore: {
+    screen: DataStoreScreen
+  }
 });
 
 const SwitchNavigator = createSwitchNavigator({

@@ -1,7 +1,41 @@
 import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet} from 'react-native';
+import {View, Text, Button, StyleSheet, AsyncStorage} from 'react-native';
+import {TextInput} from 'react-native-gesture-handler';
+import navigationUtil from '../../utils/navigationUtil';
 
-export default class HomePage extends Component {
+export default class FavouritePage extends Component {
+  state = {
+    text: '',
+    showText: '',
+  };
+
+  save(key, text) {
+    AsyncStorage.setItem(key, text, err => {
+      console.log('in save callback');
+      err && console.log(err.toString());
+    });
+  }
+
+  remove(key) {
+    AsyncStorage.removeItem(key)
+      .then(() => {
+        console.log('removed resolve');
+      })
+      .catch(err => {
+        console.log('remove catch', err);
+      });
+  }
+
+  async get(key) {
+    try {
+      const value = AsyncStorage.getItem(key);
+      this.setState({showText: value});
+      console.log('value got', value);
+    } catch (err) {
+      console.log('get error: ', err);
+    }
+  }
+
   render() {
     const {navigation} = this.props;
     const {navigate, setParams} = navigation;
@@ -9,15 +43,17 @@ export default class HomePage extends Component {
       <View style={styles.container}>
         <Text>收藏页</Text>
         <Button
-          title="改变主题"
           onPress={() => {
-            setParams({
-              theme: {
-                tintColor: 'orange',
-                updateTime: new Date().getTime(),
-              },
-            });
-          }}></Button>
+            navigationUtil.navigate('AsyncStorageDemo');
+          }}
+          title="AsyncStorageDemo"
+        />
+        <Button
+          onPress={() => {
+            navigationUtil.navigate('DataStore');
+          }}
+          title="DataStoreDemo"
+        />
       </View>
     );
   }

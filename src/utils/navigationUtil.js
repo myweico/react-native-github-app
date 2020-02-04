@@ -1,13 +1,13 @@
 import {NavigationActions} from 'react-navigation';
 
-export default class NavigationUtil {
+export default class navigationUtil {
   static _navigator;
 
   /**
    * 保存顶级的 navigator，用于 dispatch action
    */
   static setTopLevelNavigator = navigatorRef => {
-    NavigationUtil._navigator = navigatorRef;
+    this._navigator = navigatorRef;
   };
 
   /**

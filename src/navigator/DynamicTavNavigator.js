@@ -8,6 +8,7 @@ import FavouriteScreen from '../pages/FavouritePage';
 import MyScreen from '../pages/MyPage';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {connect} from 'react-redux';
 
 const routesConfig = {
   Popular: {
@@ -68,26 +69,31 @@ const routesConfig = {
   },
 };
 
-export default class extends Component {
+class DynamicTabNavigator extends Component {
   constructor(props) {
     super(props);
     console.disableYellowBox = true; // 关闭警告框提示
   }
 
   _tabNavigator() {
+    if (this.navigator) {
+      return this.navigator;
+    }
     const {Popular, Trending, Favourite, My} = routesConfig;
 
     const tabs = {Popular, Trending, Favourite, My};
 
     Popular.navigationOptions.tabBarLabel = '最热'; // 动态修改 tab 属性
 
-    const Navigator = createAppContainer(
+    this.navigator = createAppContainer(
       createBottomTabNavigator(tabs, {
-        tabBarComponent: TabBarComponent,
+        tabBarComponent: props => (
+          <TabBarComponent {...props} theme={this.props.theme} />
+        ),
       }),
     );
 
-    return Navigator;
+    return this.navigator;
   }
 
   render() {
@@ -97,27 +103,17 @@ export default class extends Component {
 }
 
 class TabBarComponent extends Component {
-  constructor(props) {
-    super(props);
-    this.theme = {
-      tintColor: props.tintColor,
-      updateTime: new Date().getTime(),
-    };
-  }
   render() {
-    const {routes, index} = this.props.navigation.state;
-    if (routes[index].params) {
-      const {theme} = routes[index].params;
-      if (theme && theme.updateTime > this.theme.updateTime) {
-        this.theme = theme;
-      }
-    }
     return (
       <BottomTabBar
         {...this.props}
-        activeTintColor={
-          this.theme.tintColor || this.props.activeTintColor
-        }></BottomTabBar>
+        activeTintColor={this.props.theme}></BottomTabBar>
     );
   }
 }
+
+const mapStateToProps = state => ({
+  theme: state.theme.theme,
+});
+
+export default connect(mapStateToProps)(DynamicTabNavigator);

@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet} from 'react-native';
-
-export default class Page1 extends Component {
+import {connect} from 'react-redux';
+import {onThemeChange} from '../../store/actions';
+class TrendingPage extends Component {
   render() {
     const {navigation} = this.props;
     const {setParams} = navigation;
@@ -11,12 +12,7 @@ export default class Page1 extends Component {
         <Button
           title="改变主题"
           onPress={() => {
-            setParams({
-              theme: {
-                tintColor: 'blue',
-                updateTime: new Date().getTime(),
-              },
-            });
+            this.props.onThemeChange('yellow');
           }}></Button>
       </View>
     );
@@ -30,3 +26,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
+
+const mapActionsToProps = dispatch => ({
+  onThemeChange: theme => dispatch(onThemeChange(theme)),
+});
+
+export default connect(null, mapActionsToProps)(TrendingPage);
