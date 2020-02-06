@@ -24,6 +24,10 @@ export default class FavouritePage extends Component {
     });
   }
 
+  genUrl(key) {
+    return URL + key + QUERY_STR;
+  }
+
   render() {
     const {navigation} = this.props;
     const {navigate, setParams} = navigation;

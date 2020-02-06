@@ -1,3 +1,4 @@
 import {onThemeChange} from './theme';
+import {onLoadPopularData, onLoadMorePopular} from './popular';
 
-export {onThemeChange};
+export {onThemeChange, onLoadPopularData, onLoadMorePopular};
