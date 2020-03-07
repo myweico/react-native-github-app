@@ -1,23 +1,23 @@
 import Types from '../types';
 import {LocalFirstStore, DATA_TYPE} from '../../../utils/storageUtil';
-import { handleData } from '../actionUtils'
+import { handleData } from '../actionUtils';
 
 /**
- * 获取最热数据的异步 action
+ * 获取趋势数据的异步 action
  * @param {string} storeName tab 对应的分类
  * @param {string} url 请求的路径
  */
-export function onLoadPopularData(storeName, url, pageSize) {
+export function onLoadTrendingData(storeName, url, pageSize) {
   return dispatch => {
-    dispatch({type: Types.POPULAR_REFRESH, storeName});
-    LocalFirstStore.fetchData(url, DATA_TYPE.popular) // 异步action 与 数据流
+    dispatch({type: Types.TRENDING_REFRESH, storeName});
+    LocalFirstStore.fetchData(url, DATA_TYPE.trending) // 异步action 与 数据流
       .then(data => {
-        handleData(DATA_TYPE.popular, dispatch, storeName, data, pageSize);
+        handleData(DATA_TYPE.trending, dispatch, storeName, data, pageSize);
       })
       .catch(err => {
         console.error(err);
         dispatch({
-          type: Types.POPULAR_LOAD_FAIL,
+          type: Types.TRENDING_LOAD_FAIL,
           storeName,
           error: err,
         });
@@ -25,7 +25,7 @@ export function onLoadPopularData(storeName, url, pageSize) {
   };
 }
 
-export function onLoadMorePopular(
+export function onLoadMoreTrending(
   storeName,
   pageIndex,
   pageSize,
@@ -40,7 +40,7 @@ export function onLoadMorePopular(
           callback('no more');
         }
         dispatch({
-          type: Types.POPULAR_LOAD_MORE_FAIL,
+          type: Types.TRENDING_LOAD_MORE_FAIL,
           error: 'no more',
           storeName,
           pageIndex: pageIndex - 1,
@@ -52,7 +52,7 @@ export function onLoadMorePopular(
             ? dataArray.length
             : pageSize * pageIndex;
         dispatch({
-          type: Types.POPULAR_LOAD_MORE_SUCCESS,
+          type: Types.TRENDING_LOAD_MORE_SUCCESS,
           storeName,
           pageIndex,
           projectModes: dataArray.slice(0, max),

@@ -24,7 +24,6 @@ const PAGE_SIZE = 10;
 class PopularTab extends Component {
   constructor(props) {
     super(props);
-    console.info('props', props);
     const {tabBarLabel} = this.props;
     this.storeName = tabBarLabel;
     this.toastRef = createRef();

@@ -1,4 +1,7 @@
 import {AsyncStorage} from 'react-native';
+import Trending from 'GitHubTrending';
+
+const DATA_TYPE = {popular: 'popular', trending: 'trending'};
 
 class LocalFirstStore {
   /**
@@ -27,7 +30,7 @@ class LocalFirstStore {
     };
   }
 
-  static fetchData(url) {
+  static fetchData(url, type) {
     // 查看本地时间是否存在
     return new Promise((resolve, reject) => {
       this.fetchLocalData(url)
@@ -36,13 +39,29 @@ class LocalFirstStore {
         })
         .catch(() => {
           // 本地数据失效,获取网络数据
-          this.fetchNetData(url)
-            .then(data => {
-              resolve(data);
-            })
-            .catch(err => {
-              reject(err);
-            });
+          if (type === DATA_TYPE.popular) {
+            this.fetchNetData(url)
+              .then(data => {
+                resolve(data);
+              })
+              .catch(err => {
+                reject(err);
+              });
+          } else {
+            // 获取趋势数据
+            new Trending()
+              .fetchTrending(url)
+              .then(items => {
+                if (!items) {
+                  throw new Error('responseData is null');
+                }
+                this.saveData(url, items);
+                resolve(items);
+              })
+              .catch(err => {
+                reject(err);
+              });
+          }
         });
     });
   }
@@ -96,7 +115,6 @@ class LocalFirstStore {
           reject(new Error('Network response was not ok'));
         })
         .then(data => {
-          data.atime = new Date().toString();
           this.saveData(url, data);
           resolve(data);
         })
@@ -116,4 +134,4 @@ class LocalFirstStore {
   }
 }
 
-export {LocalFirstStore};
+export {LocalFirstStore, DATA_TYPE};

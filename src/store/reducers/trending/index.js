@@ -1,28 +1,31 @@
+/*
+ * @Description:
+ * @Author: myweico
+ * @LastEditors: myweico
+ * @Date: 2020-03-07 14:55:37
+ * @LastEditTime: 2020-03-07 22:24:24
+ */
+
 import Types from '../../actions/types';
 
 const defaultState = {};
 
 /**
- * 最热模块的 reducer
+ * Trending 的状态树
  * {
- *    android: {
- *        items: [],
- *        loading: false,
- *        offset: 0
- *    },
- *    ios: {
- *        items: [],
- *        loading: false
- *    }
+ *    day: {},
+ *    month: {},
+ *    year: {}
  * }
- * @param {object} state 状态
- * @param {object} action 行为
+ * @param {*} state
+ * @param {*} actions
  */
-export default function popularReducer(state = defaultState, action) {
-  const {storeName} = action;
-  switch (action.type) {
-    case Types.POPULAR_REFRESH:
-      // 触发下拉刷新
+
+export default function TrendingState(state = defaultState, action) {
+  const {type, storeName} = action;
+
+  switch (type) {
+    case Types.TRENDING_REFRESH:
       return {
         ...state,
         [storeName]: {
@@ -31,8 +34,7 @@ export default function popularReducer(state = defaultState, action) {
           hideLoadingMore: true,
         },
       };
-    case Types.POPULAR_LOAD_SUCCESS:
-      // 下拉刷新成功
+    case Types.TRENDING_LOAD_SUCCESS:
       return {
         ...state,
         [storeName]: {
@@ -43,8 +45,7 @@ export default function popularReducer(state = defaultState, action) {
           isLoading: false,
         },
       };
-    case Types.POPULAR_LOAD_FAIL:
-      // 下拉失败
+    case Types.TRENDING_LOAD_FAIL:
       return {
         ...state,
         [storeName]: {
@@ -52,17 +53,17 @@ export default function popularReducer(state = defaultState, action) {
           isLoading: false,
         },
       };
-    case Types.POPULAR_LOAD_MORE_SUCCESS:
+    case Types.TRENDING_LOAD_MORE_SUCCESS:
       return {
         ...state,
         [storeName]: {
           ...state[storeName],
           projectModes: action.projectModes,
-          hideLoadingMore: false,
+          hideLoadingMore: true,
           pageIndex: action.pageIndex,
         },
       };
-    case Types.POPULAR_LOAD_MORE_FAIL:
+    case Types.TRENDING_LOAD_MORE_FAIL:
       return {
         ...state,
         [storeName]: {
