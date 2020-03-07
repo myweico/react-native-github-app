@@ -3,7 +3,7 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-07 14:55:37
- * @LastEditTime: 2020-03-07 22:24:24
+ * @LastEditTime: 2020-03-07 23:55:44
  */
 
 import Types from '../../actions/types';
@@ -59,7 +59,7 @@ export default function TrendingState(state = defaultState, action) {
         [storeName]: {
           ...state[storeName],
           projectModes: action.projectModes,
-          hideLoadingMore: true,
+          hideLoadingMore: false,
           pageIndex: action.pageIndex,
         },
       };
