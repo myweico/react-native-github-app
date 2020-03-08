@@ -1,6 +1,13 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
-import {ViewPropTypes, StatusBar, View, Platform} from 'react-native';
+import {
+  ViewPropTypes,
+  StatusBar,
+  View,
+  Platform,
+  StyleSheet,
+  Text,
+} from 'react-native';
 
 const StatusBarShape = {
   barStyle: PropTypes.oneOf(['light-content', 'default']),
@@ -10,7 +17,7 @@ const StatusBarShape = {
 
 const NAV_BAR_HEIGHT_IOS = 44;
 const NAV_BAR_HEIGHT_ANDROID = 50;
-const STATUS_BAR_HEIGHT = 20;
+const STATUS_BAR_HEIGHT = 44;
 
 export default class NavigationBar extends Component {
   static propTypes = {
@@ -29,6 +36,7 @@ export default class NavigationBar extends Component {
       barStyle: 'light-content',
       hidden: false,
     },
+    title: '标题'
   };
 
   getButtonElement(Button) {
@@ -46,7 +54,7 @@ export default class NavigationBar extends Component {
       this.props.titleView
     ) : (
       <Text ellipsizeMode="head" numberOfLines={1} style={styles.title}>
-        {title}
+        {this.props.title}
       </Text>
     );
 
@@ -72,7 +80,7 @@ export default class NavigationBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor:
+    backgroundColor: '#1e8bf1',
   },
   navButton: {
     alignItems: 'center',
@@ -84,19 +92,20 @@ const styles = StyleSheet.create({
     height: Platform.OS === 'ios' ? NAV_BAR_HEIGHT_IOS : NAV_BAR_HEIGHT_ANDROID,
   },
   navBarTitleContainer: {
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
     left: 40,
     right: 40,
     top: 0,
-    bottom: 0
+    bottom: 0,
   },
   title: {
     fontSize: 20,
-    color: 'white'
+    color: 'white',
   },
   statusBar: {
-    height: Platform.OS === 'ios' ? STATUS_BAR_HEIGHT : 0
-  }
+    height: Platform.OS === 'ios'  ? STATUS_BAR_HEIGHT : 0,
+    backgroundColor: "#1e8bf1"
+  },
 });

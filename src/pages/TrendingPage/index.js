@@ -6,10 +6,9 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
-  DeviceInfo
+  TouchableOpacity,
 } from 'react-native';
 import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
-import SafeAreaView from 'react-native-safe-area-view';
 import {createAppContainer} from 'react-navigation';
 import {connect} from 'react-redux';
 import TrendingItem from './components/TrendingItem';
@@ -18,12 +17,14 @@ import {
   onLoadTrendingData,
   onLoadMoreTrending,
 } from '../../store/actions/trending';
+import NavigationBar from '../../components/NavigationBar';
+import TrendingDialog, {TimeSpans} from './components/Dialog';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const URL = `https://github.com/trending/`;
 const QUERY_STR = '?since=daily';
 const THEME_COLOR = 'red';
 const PAGE_SIZE = 10;
-
 class TrendingTab extends Component {
   constructor(props) {
     super(props);
@@ -90,7 +91,6 @@ class TrendingTab extends Component {
   }
 
   render() {
-    const {trending} = this.props;
     let store = this._store();
     return (
       <View style={styles.container}>
@@ -135,11 +135,52 @@ class TrendingTab extends Component {
 }
 
 class TrendingPage extends Component {
-  static router;
-
   constructor(props) {
     super(props);
     this.tabs = ['C', 'C#', 'PHP', 'JavaScript'];
+    this.state = {
+      timeSpan: TimeSpans[0],
+    };
+  }
+
+  getTitleView() {
+    return (
+      <TouchableOpacity
+        underlayColor="transparent"
+        onPress={() => {
+          this.dialog && this.dialog.show();
+        }}>
+        <View
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <Text style={styles.titleText}>
+            趋势 {this.state.timeSpan.showText}
+          </Text>
+          <MaterialIcons
+            name={'arrow-drop-down'}
+            size={22}
+            style={{color: 'white'}}></MaterialIcons>
+        </View>
+      </TouchableOpacity>
+    );
+  }
+
+  onSelectTimeSpan(tab) {
+    this.dialog.dismiss();
+    this.setState({
+      timeSpan: tab,
+    });
+  }
+
+  getTrendingDialog() {
+    return (
+      <TrendingDialog
+        ref={dialog => (this.dialog = dialog)}
+        onSelect={tab => this.onSelectTimeSpan(tab)}></TrendingDialog>
+    );
   }
 
   genTabBar() {
@@ -158,7 +199,6 @@ class TrendingPage extends Component {
           scrollEnabled: true,
           tabStyle: {
             minWidth: 50,
-            marginTop: 30
           },
           upperCaseLabel: false,
           labelStyle: {
@@ -176,7 +216,17 @@ class TrendingPage extends Component {
 
   render() {
     const MatTopNav = this.genTabBar();
-    return <MatTopNav />;
+    const NavBar = (
+      <NavigationBar titleView={this.getTitleView()}></NavigationBar>
+    );
+    const Dialog = this.getTrendingDialog();
+    return (
+      <>
+        {NavBar}
+        <MatTopNav />
+        {Dialog}
+      </>
+    );
   }
 }
 
@@ -192,6 +242,10 @@ const styles = StyleSheet.create({
   indicator: {
     color: 'red',
     margin: 10,
+  },
+  titleText: {
+    fontSize: 20,
+    color: '#fff',
   },
 });
 

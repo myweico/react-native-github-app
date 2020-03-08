@@ -15,6 +15,7 @@ import {connect} from 'react-redux';
 import {onLoadPopularData, onLoadMorePopular} from '../../store/actions';
 import PopularItem from './components/PopularItem';
 import Toast from 'react-native-easy-toast';
+import NavigationBar from '../../components/NavigationBar';
 
 const URL = `https://api.github.com/search/repositories?q=`;
 const QUERY_STR = '&sort=stars';
@@ -166,7 +167,6 @@ class PopularPage extends Component {
           scrollEnabled: true,
           tabStyle: {
             minWidth: 50,
-            marginTop: 30,
           },
           upperCaseLabel: false,
           labelStyle: {
@@ -183,8 +183,16 @@ class PopularPage extends Component {
   }
 
   render() {
+    const navigationBar = <NavigationBar title="最热"></NavigationBar>;
     const MatTopNav = this.genTabBar();
-    return <MatTopNav />;
+    return (
+      // <SafeAreaView style={{flex: 1}}>
+      <>
+        {navigationBar}
+        <MatTopNav />
+      </>
+      // </SafeAreaView>
+    );
   }
 }
 
