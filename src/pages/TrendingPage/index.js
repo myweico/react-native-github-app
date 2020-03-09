@@ -73,7 +73,8 @@ class TrendingTab extends Component {
   }
 
   genUrl(key) {
-    return URL + key + QUERY_STR;
+    // console.log(URL + key + '?' + this.props.timeSpan.searchText);
+    return URL + key + '?' + this.props.timeSpan.searchText;
   }
 
   renderItem(data) {
@@ -187,7 +188,13 @@ class TrendingPage extends Component {
     const routesConfig = {};
     this.tabs.forEach((part, index) => {
       routesConfig[`tab${index}`] = {
-        screen: props => <TrendingTabPage {...props} tabBarLabel={part} />,
+        screen: props => (
+          <TrendingTabPage
+            {...props}
+            tabBarLabel={part}
+            timeSpan={this.state.timeSpan}
+          />
+        ),
         navigationOptions: {
           tabBarLabel: part,
         },
