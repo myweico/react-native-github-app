@@ -74,9 +74,20 @@ class PopularTab extends Component {
     return URL + key + QUERY_STR;
   }
 
+  toDetailPage(params) {
+    this.props.navigation.navigate('DetailPage', params);
+  }
+
   renderItem(data) {
     const item = data.item;
-    return <PopularItem item={item} onSelect={() => {}} />;
+    return (
+      <PopularItem
+        item={item}
+        onSelect={() => {
+          this.toDetailPage();
+        }}
+      />
+    );
   }
 
   genIndicator() {

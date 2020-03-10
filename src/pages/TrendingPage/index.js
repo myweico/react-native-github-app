@@ -77,9 +77,20 @@ class TrendingTab extends Component {
     return URL + key + '?' + this.props.timeSpan.searchText;
   }
 
+  toDetailPage(params) {
+    this.props.navigation.navigate('DetailPage', params);
+  }
+
   renderItem(data) {
     const item = data.item;
-    return <TrendingItem item={item} onSelect={() => {}} />;
+    return (
+      <TrendingItem
+        item={item}
+        onSelect={() => {
+          this.toDetailPage();
+        }}
+      />
+    );
   }
 
   genIndicator() {
