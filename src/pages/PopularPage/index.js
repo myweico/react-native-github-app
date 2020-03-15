@@ -16,6 +16,7 @@ import {onLoadPopularData, onLoadMorePopular} from '../../store/actions';
 import PopularItem from './components/PopularItem';
 import Toast from 'react-native-easy-toast';
 import NavigationBar from '../../components/NavigationBar';
+import navigationUtil from '../../utils/navigationUtil';
 
 const URL = `https://api.github.com/search/repositories?q=`;
 const QUERY_STR = '&sort=stars';
@@ -75,7 +76,8 @@ class PopularTab extends Component {
   }
 
   toDetailPage(params) {
-    this.props.navigation.navigate('DetailPage', params);
+    console.log('clicked');
+    navigationUtil.navigate('DetailPage', params);
   }
 
   renderItem(data) {

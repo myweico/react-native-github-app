@@ -20,6 +20,7 @@ import {
 import NavigationBar from '../../components/NavigationBar';
 import TrendingDialog, {TimeSpans} from './components/Dialog';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import navigationUtil from '../../utils/navigationUtil';
 
 const URL = `https://github.com/trending/`;
 const QUERY_STR = '?since=daily';
@@ -78,7 +79,7 @@ class TrendingTab extends Component {
   }
 
   toDetailPage(params) {
-    this.props.navigation.navigate('DetailPage', params);
+    navigationUtil.navigate('DetailPage', params);
   }
 
   renderItem(data) {
