@@ -96,13 +96,16 @@ const MainStackNavigator = createStackNavigator({
   },
   DetailPage: {
     screen: DetailScreen,
+    navigationOptions: {
+      header: null,
+    },
   },
   AsyncStorageDemo: {
-    screen: AsyncStorageDemo
+    screen: AsyncStorageDemo,
   },
   DataStore: {
-    screen: DataStoreScreen
-  }
+    screen: DataStoreScreen,
+  },
 });
 
 const SwitchNavigator = createSwitchNavigator({

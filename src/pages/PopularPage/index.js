@@ -76,7 +76,6 @@ class PopularTab extends Component {
   }
 
   toDetailPage(params) {
-    console.log('clicked');
     navigationUtil.navigate('DetailPage', params);
   }
 
@@ -86,7 +85,9 @@ class PopularTab extends Component {
       <PopularItem
         item={item}
         onSelect={() => {
-          this.toDetailPage();
+          this.toDetailPage({
+            projectModel: item,
+          });
         }}
       />
     );
