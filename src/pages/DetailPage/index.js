@@ -4,6 +4,9 @@ import NavigationBar from '../../components/NavigationBar';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {WebView} from 'react-native-webview';
+import navigationUtil from '../../utils/navigationUtil';
+import {BackBtn, ShareBtn} from '../../components/Button';
+import BackPress from '../../components/BackPress';
 
 const GITHUB_URL = 'https://github.com/';
 
@@ -13,47 +16,73 @@ export default class Page1 extends Component {
     const {navigation} = props;
     const {getParam} = navigation;
     const projectModel = getParam('projectModel');
-    this.url = projectModel.html_url || GITHUB_URL + projectModel.fullName;
-    this.title = projectModel.full_name || projectModel;
+    console.info('projectModel', projectModel);
+    this.url = projectModel.html_url || GITHUB_URL + projectModel.full_name;
+    this.title = projectModel.full_name || projectModel.fullName;
+    this.BackPress = new BackPress({
+      backPress: () => {
+        this.handleBackPress();
+      },
+    });
+    this.state = {
+      canGoBack: false,
+      url: this.url,
+      title: this.title,
+    };
+  }
+
+  handleBackPress() {
+    this.goBack();
+    return true;
   }
 
   goBack() {
+    if (this.state.canGoBack) {
+      // 导航还能返回的话，返回上一个url
+      this.webview.goBack();
+    } else {
+      navigationUtil.goBack();
+    }
   }
 
   genLeftButton() {
-    return (
-      <TouchableOpacity onPress={() => this.goBack()} style={{paddingLeft: 16}}>
-        <Ionicons
-          name={'ios-arrow-back'}
-          size={26}
-          style={{color: '#fff'}}></Ionicons>
-      </TouchableOpacity>
-    );
+    return <BackBtn onPress={() => this.goBack()} />;
   }
 
   genRightButton() {
     return (
       <View style={styles.rightButtonArea}>
-        <TouchableOpacity>
+        {/* <TouchableOpacity>
           <MaterialIcons
             name="favorite"
             size={26}
             style={[styles.rightButton, {color: '#ff2f2f'}]}></MaterialIcons>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity>
           <MaterialIcons
             name="favorite-border"
             size={26}
             style={[styles.rightButton, {color: '#fff'}]}></MaterialIcons>
         </TouchableOpacity>
-        <TouchableOpacity>
-          <Ionicons
-            name={'md-share'}
-            size={26}
-            style={[styles.rightButton, {color: '#fff'}]}></Ionicons>
-        </TouchableOpacity>
+        <ShareBtn onPress={() => {}} />
       </View>
     );
+  }
+
+  onNavigationStateChange(e) {
+    console.log('event', e);
+    this.setState({
+      canGoBack: e.canGoBack,
+      url: e.url,
+    });
+  }
+
+  componentDidMount() {
+    this.BackPress.componentDidMount();
+  }
+
+  componentWillUnmount() {
+    this.BackPress.componentWillUnmount();
   }
 
   render() {
@@ -62,12 +91,17 @@ export default class Page1 extends Component {
     return (
       <View style={styles.container}>
         <NavigationBar
-          title="详情页"
+          title={this.title}
           leftButton={LeftButton}
-          rightButton={RightButton}></NavigationBar>
+          rightButton={RightButton}
+          titleLayoutStyle={
+            this.title.length > 20 ? {paddingRight: 40} : {}
+          }></NavigationBar>
         <WebView
           source={{uri: this.url}}
           style={styles.content}
+          startInLoadingState={true}
+          onNavigationStateChange={e => this.onNavigationStateChange(e)}
           ref={ref => (this.webview = ref)}></WebView>
       </View>
     );

@@ -88,7 +88,9 @@ class TrendingTab extends Component {
       <TrendingItem
         item={item}
         onSelect={() => {
-          this.toDetailPage();
+          this.toDetailPage({
+            projectModel: item,
+          });
         }}
       />
     );

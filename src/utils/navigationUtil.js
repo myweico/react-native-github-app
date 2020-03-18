@@ -28,8 +28,12 @@ export default class navigationUtil {
       }),
     );
   };
+
   // static resetToHomePage = (params = {}) => {
   //   const {navigation} = params;
   //   navigation.navigate('Main');
   // };
+  static goBack = () => {
+    this._navigator.dispatch(NavigationActions.back());
+  };
 }
