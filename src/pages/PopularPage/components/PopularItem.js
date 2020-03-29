@@ -2,14 +2,16 @@ import React, {Component} from 'react';
 import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import BaseItem from '../../../components/BaseItem';
 
-export default class PopularItem extends Component {
+export default class PopularItem extends BaseItem {
   constructor(props) {
     super(props);
   }
 
   render() {
-    const {item} = this.props;
+    const {projectModel} = this.props;
+    const {item} = projectModel;
     if (!item || !item.owner) return null;
     return (
       <TouchableOpacity onPress={this.props.onSelect}>
@@ -30,12 +32,7 @@ export default class PopularItem extends Component {
                 size={24}
                 style={{color: '#ffcb6b'}}></AntDesign>
             </View>
-            <TouchableOpacity onPress={() => {}}>
-              <MaterialIcons
-                name="favorite-border"
-                size={24}
-                style={{color: '#333'}}></MaterialIcons>
-            </TouchableOpacity>
+            {this.getFavoriteIcon()}
           </View>
         </View>
       </TouchableOpacity>

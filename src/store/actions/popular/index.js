@@ -1,18 +1,25 @@
 import Types from '../types';
 import {LocalFirstStore, DATA_TYPE} from '../../../utils/storageUtil';
-import { handleData } from '../actionUtils'
+import {handleData, _projectModels} from '../actionUtils';
 
 /**
  * 获取最热数据的异步 action
  * @param {string} storeName tab 对应的分类
  * @param {string} url 请求的路径
  */
-export function onLoadPopularData(storeName, url, pageSize) {
+export function onLoadPopularData(storeName, url, pageSize, favoriteDao) {
   return dispatch => {
     dispatch({type: Types.POPULAR_REFRESH, storeName});
     LocalFirstStore.fetchData(url, DATA_TYPE.popular) // 异步action 与 数据流
       .then(data => {
-        handleData(DATA_TYPE.popular, dispatch, storeName, data, pageSize);
+        handleData(
+          DATA_TYPE.popular,
+          dispatch,
+          storeName,
+          data,
+          pageSize,
+          favoriteDao,
+        );
       })
       .catch(err => {
         console.error(err);
@@ -30,6 +37,7 @@ export function onLoadMorePopular(
   pageIndex,
   pageSize,
   dataArray = [],
+  favoriteDao,
   callback,
 ) {
   return dispatch => {
@@ -51,11 +59,14 @@ export function onLoadMorePopular(
           pageSize * pageIndex > dataArray.length
             ? dataArray.length
             : pageSize * pageIndex;
-        dispatch({
-          type: Types.POPULAR_LOAD_MORE_SUCCESS,
-          storeName,
-          pageIndex,
-          projectModes: dataArray.slice(0, max),
+
+        _projectModels(dataArray.slice(0, max), favoriteDao, data => {
+          dispatch({
+            type: Types.POPULAR_LOAD_MORE_SUCCESS,
+            storeName,
+            pageIndex,
+            projectModes: data,
+          });
         });
       }
     }, 1000);

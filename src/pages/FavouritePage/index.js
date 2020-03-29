@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import {View, Text, Button, StyleSheet, AsyncStorage} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import navigationUtil from '../../utils/navigationUtil';
+import moduleName from 'react'
 
 export default class FavouritePage extends Component {
   state = {
