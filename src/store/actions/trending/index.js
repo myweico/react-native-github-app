@@ -1,18 +1,25 @@
 import Types from '../types';
 import {LocalFirstStore, DATA_TYPE} from '../../../utils/storageUtil';
-import { handleData } from '../actionUtils';
+import {handleData, _projectModels} from '../actionUtils';
 
 /**
  * 获取趋势数据的异步 action
  * @param {string} storeName tab 对应的分类
  * @param {string} url 请求的路径
  */
-export function onLoadTrendingData(storeName, url, pageSize) {
+export function onLoadTrendingData(storeName, url, pageSize, favoriteDao) {
   return dispatch => {
     dispatch({type: Types.TRENDING_REFRESH, storeName});
     LocalFirstStore.fetchData(url, DATA_TYPE.trending) // 异步action 与 数据流
       .then(data => {
-        handleData(DATA_TYPE.trending, dispatch, storeName, data, pageSize);
+        handleData(
+          DATA_TYPE.trending,
+          dispatch,
+          storeName,
+          data,
+          pageSize,
+          favoriteDao
+        );
       })
       .catch(err => {
         console.error(err);
@@ -30,6 +37,7 @@ export function onLoadMoreTrending(
   pageIndex,
   pageSize,
   dataArray = [],
+  favoriteDao,
   callback,
 ) {
   return dispatch => {
@@ -51,11 +59,13 @@ export function onLoadMoreTrending(
           pageSize * pageIndex > dataArray.length
             ? dataArray.length
             : pageSize * pageIndex;
-        dispatch({
-          type: Types.TRENDING_LOAD_MORE_SUCCESS,
-          storeName,
-          pageIndex,
-          projectModes: dataArray.slice(0, max),
+        _projectModels(dataArray.slice(0, max), favoriteDao, projectModels => {
+          dispatch({
+            type: Types.TRENDING_LOAD_MORE_SUCCESS,
+            storeName,
+            pageIndex,
+            projectModes: projectModels,
+          });
         });
       }
     }, 1000);

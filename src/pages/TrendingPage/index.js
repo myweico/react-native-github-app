@@ -21,11 +21,15 @@ import NavigationBar from '../../components/NavigationBar';
 import TrendingDialog, {TimeSpans} from './components/Dialog';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import navigationUtil from '../../utils/navigationUtil';
+import FavoriteDao from '../../dao/FavoriteDao';
+import favorite from '../../var/favorite';
 
 const URL = `https://github.com/trending/`;
 const QUERY_STR = '?since=daily';
 const THEME_COLOR = 'red';
 const PAGE_SIZE = 10;
+const favoriteDao = new FavoriteDao(favorite.trending);
+
 class TrendingTab extends Component {
   constructor(props) {
     super(props);
@@ -49,12 +53,13 @@ class TrendingTab extends Component {
         store.pageIndex + 1,
         PAGE_SIZE,
         store.items,
+        favoriteDao,
         () => {
           this.toastRef.show('没有更多了');
         },
       );
     } else {
-      loadTrendingData(this.storeName, url, PAGE_SIZE);
+      loadTrendingData(this.storeName, url, PAGE_SIZE, favoriteDao);
     }
   };
 
@@ -83,13 +88,21 @@ class TrendingTab extends Component {
   }
 
   renderItem(data) {
-    const item = data.item;
+    const projectModel = data.item;
+    const item = projectModel.item || {};
     return (
       <TrendingItem
-        item={item}
+        projectModel={projectModel}
+        onFavorite={(item, isFavorite) => {
+          if (isFavorite) {
+            favoriteDao.saveFavoriteItem(item.fullName, JSON.stringify(item));
+          } else {
+            favoriteDao.removeFavoriteItem(item.fullName);
+          }
+        }}
         onSelect={() => {
           this.toDetailPage({
-            projectModel: item,
+            projectModel: (projectModel && projectModel.item) || {},
           });
         }}
       />
@@ -99,7 +112,7 @@ class TrendingTab extends Component {
   genIndicator() {
     return this._store().hideLoadingMore ? null : (
       <View style={styles.indicatorContainer}>
-        <ActivityIndicator style={styles.indicator}></ActivityIndicator>
+        <ActivityIndicator style={styles.indicator} />
         <Text>正在加载更多...</Text>
       </View>
     );
@@ -177,7 +190,8 @@ class TrendingPage extends Component {
           <MaterialIcons
             name={'arrow-drop-down'}
             size={22}
-            style={{color: 'white'}}></MaterialIcons>
+            style={{color: 'white'}}
+          />
         </View>
       </TouchableOpacity>
     );
@@ -194,7 +208,8 @@ class TrendingPage extends Component {
     return (
       <TrendingDialog
         ref={dialog => (this.dialog = dialog)}
-        onSelect={tab => this.onSelectTimeSpan(tab)}></TrendingDialog>
+        onSelect={tab => this.onSelectTimeSpan(tab)}
+      />
     );
   }
 
@@ -237,9 +252,7 @@ class TrendingPage extends Component {
 
   render() {
     const MatTopNav = this.genTabBar();
-    const NavBar = (
-      <NavigationBar titleView={this.getTitleView()}></NavigationBar>
-    );
+    const NavBar = <NavigationBar titleView={this.getTitleView()} />;
     const Dialog = this.getTrendingDialog();
     return (
       <>
@@ -275,10 +288,19 @@ const mapStateToProps = state => ({
 });
 
 const mapActionsToProps = dispatch => ({
-  loadTrendingData: (storeName, url, pageSize) =>
-    dispatch(onLoadTrendingData(storeName, url, pageSize)),
-  loadMoreTrending: (storeName, url, pageSize, items, callback) =>
-    dispatch(onLoadMoreTrending(storeName, url, pageSize, items, callback)),
+  loadTrendingData: (storeName, url, pageSize, favoriteDao) =>
+    dispatch(onLoadTrendingData(storeName, url, pageSize, favoriteDao)),
+  loadMoreTrending: (storeName, url, pageSize, items, favoriteDao, callback) =>
+    dispatch(
+      onLoadMoreTrending(
+        storeName,
+        url,
+        pageSize,
+        items,
+        favoriteDao,
+        callback,
+      ),
+    ),
 });
 
 const TrendingTabPage = connect(

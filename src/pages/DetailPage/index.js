@@ -17,7 +17,11 @@ export default class Page1 extends Component {
     const {getParam} = navigation;
     const projectModel = getParam('projectModel');
     console.info('projectModel', projectModel);
-    this.url = projectModel.html_url || GITHUB_URL + projectModel.full_name;
+    this.url =
+      projectModel.html_url ||
+      (projectModel.full_name && GITHUB_URL + projectModel.full_name) ||
+      (projectModel.fullName && GITHUB_URL + projectModel.fullName) ||
+      GITHUB_URL;
     this.title = projectModel.full_name || projectModel.fullName;
     this.BackPress = new BackPress({
       backPress: () => {
@@ -62,7 +66,8 @@ export default class Page1 extends Component {
           <MaterialIcons
             name="favorite-border"
             size={26}
-            style={[styles.rightButton, {color: '#fff'}]}></MaterialIcons>
+            style={[styles.rightButton, {color: '#fff'}]}
+          />
         </TouchableOpacity>
         <ShareBtn onPress={() => {}} />
       </View>
@@ -96,13 +101,15 @@ export default class Page1 extends Component {
           rightButton={RightButton}
           titleLayoutStyle={
             this.title && this.title.length > 20 ? {paddingRight: 40} : {}
-          }></NavigationBar>
+          }
+        />
         <WebView
           source={{uri: this.url}}
           style={styles.content}
           startInLoadingState={true}
           onNavigationStateChange={e => this.onNavigationStateChange(e)}
-          ref={ref => (this.webview = ref)}></WebView>
+          ref={ref => (this.webview = ref)}
+        />
       </View>
     );
   }

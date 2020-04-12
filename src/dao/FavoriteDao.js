@@ -3,7 +3,7 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-29 15:25:30
- * @LastEditTime: 2020-04-12 10:24:03
+ * @LastEditTime: 2020-04-12 12:05:12
  */
 import {AsyncStorage} from 'react-native';
 
@@ -19,6 +19,9 @@ export default class FavoriteDao {
       if (!error) {
         // 保存添加的key
         this.updateFavoriteKeys(key, true);
+        if (typeof callback === 'function') {
+          callback();
+        }
       }
     });
   }

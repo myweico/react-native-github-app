@@ -3,8 +3,9 @@ import {Image, Text, View, TouchableOpacity, StyleSheet} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import HTMLView from 'react-native-htmlview';
+import BaseItem from '../../../components/BaseItem';
 
-export default class TrendingItem extends Component {
+export default class TrendingItem extends BaseItem {
   constructor(props) {
     super(props);
   }
@@ -14,7 +15,8 @@ export default class TrendingItem extends Component {
   }
 
   render() {
-    const {item} = this.props;
+    const {projectModel} = this.props;
+    const item = projectModel.item;
     if (!item) return null;
     let description = '<p>' + item.description + '</p>';
     return (
@@ -45,7 +47,7 @@ export default class TrendingItem extends Component {
               <Image
                 style={{height: 22, width: 22, marginLeft: 1}}
                 source={{
-                  uri: this.getFirstAvator(item.contributors) || "",
+                  uri: this.getFirstAvator(item.contributors) || '',
                 }}
               />
             </View>
@@ -53,13 +55,7 @@ export default class TrendingItem extends Component {
               <Text>{item.starCount}</Text>
               <AntDesign name="star" size={24} style={{color: '#ffcb6b'}} />
             </View>
-            <TouchableOpacity onPress={() => {}}>
-              <MaterialIcons
-                name="favorite-border"
-                size={24}
-                style={{color: '#333'}}
-              />
-            </TouchableOpacity>
+            {this.getFavoriteIcon()}
           </View>
         </View>
       </TouchableOpacity>
