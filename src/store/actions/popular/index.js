@@ -22,7 +22,7 @@ export function onLoadPopularData(storeName, url, pageSize, favoriteDao) {
         );
       })
       .catch(err => {
-        console.error(err);
+        console.log(err);
         dispatch({
           type: Types.POPULAR_LOAD_FAIL,
           storeName,

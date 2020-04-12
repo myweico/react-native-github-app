@@ -3,17 +3,17 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-29 16:51:15
- * @LastEditTime: 2020-03-29 17:50:19
+ * @LastEditTime: 2020-04-12 09:35:48
  */
 
 import React, {Component} from 'react';
-import {PropsTypes} from 'prop-types';
-import {TouchableOpacity} from 'react-native-gesture-handler';
+import {PropTypes} from 'prop-types';
+import {TouchableOpacity} from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 export default class BaseItem extends Component {
   static propTypes = {
-    peojectModel: PropsTypes.object,
+    peojectModel: PropTypes.object,
     onSelect: PropTypes.func,
     onFavorite: PropTypes.func,
   };
@@ -23,6 +23,13 @@ export default class BaseItem extends Component {
     this.state = {
       isFavorite: this.props.projectModel.isFavorite,
     };
+  }
+
+  setFavoriteState(isFavorite) {
+    this.props.projectModel.isFavorite = isFavorite;
+    this.setState({
+      isFavorite: isFavorite,
+    });
   }
 
   onPressFavorite() {
@@ -37,15 +44,16 @@ export default class BaseItem extends Component {
         underlayColor="transparent"
         onPress={() => this.onPressFavorite()}>
         <MaterialIcons
-          name="favorite-border"
+          name={this.state.isFavorite ? 'favorite' : 'favorite-border'}
           size={24}
-          style={{color: '#333'}}></MaterialIcons>
+          style={{color: '#f66'}}
+        />
       </TouchableOpacity>
     );
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
-    const isFavorite = nextProps.peojectModel.isFavorite;
+    const isFavorite = nextProps.projectModel.isFavorite;
     if (prevState.isFavorite !== isFavorite) {
       return {
         ...prevState,

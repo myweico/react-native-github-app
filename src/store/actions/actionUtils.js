@@ -8,7 +8,7 @@ import favouriteUtil from '../../utils/favouriteUtil';
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-07 16:10:04
- * @LastEditTime: 2020-03-29 23:55:00
+ * @LastEditTime: 2020-04-12 09:47:44
  */
 
 /**
@@ -19,7 +19,14 @@ import favouriteUtil from '../../utils/favouriteUtil';
  * @param {array} data 数据
  * @param {number} pageSize 每页的尺寸
  */
-export function handleData(type, dispatch, storeName, data, pageSize) {
+export function handleData(
+  type,
+  dispatch,
+  storeName,
+  data,
+  pageSize,
+  favoriteDao,
+) {
   let items;
   if (type === DATA_TYPE.popular) {
     items = (data && data.items) || [];
@@ -56,7 +63,7 @@ export function handleData(type, dispatch, storeName, data, pageSize) {
  * @param {*} callback
  */
 export async function _projectModels(showItems, favoriteDao, callback) {
-  const keys = [];
+  let keys = [];
   try {
     keys = await favoriteDao.getFavoriteKeys();
   } catch (e) {

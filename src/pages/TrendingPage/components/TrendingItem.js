@@ -27,7 +27,8 @@ export default class TrendingItem extends Component {
             stylesheet={{
               p: styles.description,
               a: styles.description,
-            }}></HTMLView>
+            }}
+          />
           <Text style={styles.description}>{item.meta}</Text>
           <View style={styles.row}>
             <View style={styles.row}>
@@ -44,21 +45,20 @@ export default class TrendingItem extends Component {
               <Image
                 style={{height: 22, width: 22, marginLeft: 1}}
                 source={{
-                  uri: this.getFirstAvator(item.contributors),
-                }}></Image>
+                  uri: this.getFirstAvator(item.contributors) || "",
+                }}
+              />
             </View>
             <View style={styles.row}>
               <Text>{item.starCount}</Text>
-              <AntDesign
-                name="star"
-                size={24}
-                style={{color: '#ffcb6b'}}></AntDesign>
+              <AntDesign name="star" size={24} style={{color: '#ffcb6b'}} />
             </View>
             <TouchableOpacity onPress={() => {}}>
               <MaterialIcons
                 name="favorite-border"
                 size={24}
-                style={{color: '#333'}}></MaterialIcons>
+                style={{color: '#333'}}
+              />
             </TouchableOpacity>
           </View>
         </View>

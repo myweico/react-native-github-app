@@ -17,11 +17,14 @@ import PopularItem from './components/PopularItem';
 import Toast from 'react-native-easy-toast';
 import NavigationBar from '../../components/NavigationBar';
 import navigationUtil from '../../utils/navigationUtil';
+import FavoriteDao from '../../dao/FavoriteDao';
+import Favorite from '../../var/favorite';
 
 const URL = `https://api.github.com/search/repositories?q=`;
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = 'red';
 const PAGE_SIZE = 10;
+const favoriteDao = new FavoriteDao(Favorite.popular);
 
 class PopularTab extends Component {
   constructor(props) {
@@ -47,12 +50,13 @@ class PopularTab extends Component {
         store.pageIndex + 1,
         PAGE_SIZE,
         store.items,
+        favoriteDao,
         () => {
           this.toastRef.show('没有更多了');
         },
       );
     } else {
-      onLoadPopularData(this.storeName, url, PAGE_SIZE);
+      onLoadPopularData(this.storeName, url, PAGE_SIZE, favoriteDao);
     }
   };
 
@@ -83,11 +87,18 @@ class PopularTab extends Component {
     const item = data.item;
     return (
       <PopularItem
-        item={item}
+        projectModel={item}
         onSelect={() => {
           this.toDetailPage({
-            projectModel: item,
+            projectModel: (item && item.item) || {},
           });
+        }}
+        onFavorite={(item, isFavorite) => {
+          if (isFavorite) {
+            favoriteDao.saveFavoriteItem(String(item.id), JSON.stringify(item));
+          } else {
+            favoriteDao.removeFavoriteItem(String(item.id));
+          }
         }}
       />
     );
@@ -96,7 +107,7 @@ class PopularTab extends Component {
   genIndicator() {
     return this._store().hideLoadingMore ? null : (
       <View style={styles.indicatorContainer}>
-        <ActivityIndicator style={styles.indicator}></ActivityIndicator>
+        <ActivityIndicator style={styles.indicator} />
         <Text>正在加载更多...</Text>
       </View>
     );
@@ -110,7 +121,9 @@ class PopularTab extends Component {
         <FlatList
           data={store.projectModes}
           renderItem={data => this.renderItem(data)}
-          keyExtractor={item => '' + item.id}
+          keyExtractor={(item, index) => {
+            return String(index);
+          }}
           refreshControl={
             <RefreshControl
               title="Loading..."
@@ -197,7 +210,7 @@ class PopularPage extends Component {
   }
 
   render() {
-    const navigationBar = <NavigationBar title="最热"></NavigationBar>;
+    const navigationBar = <NavigationBar title="最热" />;
     const MatTopNav = this.genTabBar();
     return (
       // <SafeAreaView style={{flex: 1}}>
@@ -230,12 +243,17 @@ const mapStateToProps = state => ({
 });
 
 const mapActionsToProps = dispatch => ({
-  onLoadPopularData: (storeName, url, pageSize) =>
-    dispatch(onLoadPopularData(storeName, url, pageSize)),
-  onLoadMorePopular: (storeName, url, pageSize, items, callback) =>
-    dispatch(onLoadMorePopular(storeName, url, pageSize, items, callback)),
+  onLoadPopularData: (storeName, url, pageSize, favoriteDao) =>
+    dispatch(onLoadPopularData(storeName, url, pageSize, favoriteDao)),
+  onLoadMorePopular: (storeName, url, pageSize, items, favoriteDao, callback) =>
+    dispatch(
+      onLoadMorePopular(storeName, url, pageSize, items, favoriteDao, callback),
+    ),
 });
 
-const PopularTabPage = connect(mapStateToProps, mapActionsToProps)(PopularTab);
+const PopularTabPage = connect(
+  mapStateToProps,
+  mapActionsToProps,
+)(PopularTab);
 
 export default PopularPage;

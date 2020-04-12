@@ -3,18 +3,21 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-29 15:25:30
- * @LastEditTime: 2020-03-29 16:48:42
+ * @LastEditTime: 2020-04-12 10:24:03
  */
 import {AsyncStorage} from 'react-native';
 
+const FAVORITE_KEY_PREFIX = 'favourite__';
+
 export default class FavoriteDao {
   constructor(flag) {
-    this.faviriteKey = FAVORITE_KEY_PREFIX + flag;
+    this.favoriteKey = FAVORITE_KEY_PREFIX + flag;
   }
 
   saveFavoriteItem(key, value, callback) {
     AsyncStorage.setItem(key, value, (error, result) => {
       if (!error) {
+        // 保存添加的key
         this.updateFavoriteKeys(key, true);
       }
     });
@@ -24,8 +27,12 @@ export default class FavoriteDao {
     AsyncStorage.getItem(this.favoriteKey, (error, result) => {
       if (!error) {
         let favoriteKeys = [];
-        if (result) {
-          favoriteKeys = JSON.parse(result);
+        try {
+          if (result) {
+            favoriteKeys = JSON.parse(result);
+          }
+        } catch (err) {
+          console.log(err);
         }
         let index = favoriteKeys.indexOf(key);
         if (isAdd) {
@@ -39,7 +46,7 @@ export default class FavoriteDao {
             favoriteKeys.splice(index, 1);
           }
         }
-        AsyncStorage.setItem(this.favoriteKey, JSON.stringify(favoriteKey));
+        AsyncStorage.setItem(this.favoriteKey, JSON.stringify(favoriteKeys));
       }
     });
   }
@@ -52,9 +59,9 @@ export default class FavoriteDao {
       AsyncStorage.getItem(this.favoriteKey, (error, result) => {
         if (!error) {
           try {
-            resolve(JSON.parse(result));
+            resolve(JSON.parse(result || '[]'));
           } catch (e) {
-            reject(error);
+            reject(e);
           }
         } else {
           reject(error);
@@ -89,7 +96,7 @@ export default class FavoriteDao {
                 stores.map(store => {
                   const key = store[0];
                   const value = store[1];
-                  if (value) items.push(JSON.parse(value));
+                  if (value) items.push(JSON.parse(value || ''));
                 });
                 resolve(items);
               } catch (e) {

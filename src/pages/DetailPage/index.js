@@ -95,7 +95,7 @@ export default class Page1 extends Component {
           leftButton={LeftButton}
           rightButton={RightButton}
           titleLayoutStyle={
-            this.title.length > 20 ? {paddingRight: 40} : {}
+            this.title && this.title.length > 20 ? {paddingRight: 40} : {}
           }></NavigationBar>
         <WebView
           source={{uri: this.url}}

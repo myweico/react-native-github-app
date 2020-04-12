@@ -23,14 +23,12 @@ export default class PopularItem extends BaseItem {
               <Text>Author:</Text>
               <Image
                 style={{height: 22, width: 22, marginLeft: 5}}
-                source={{uri: item.owner.avatar_url}}></Image>
+                source={{uri: item.owner.avatar_url || ''}}
+              />
             </View>
             <View style={styles.row}>
               <Text>{item.stargazers_count}</Text>
-              <AntDesign
-                name="star"
-                size={24}
-                style={{color: '#ffcb6b'}}></AntDesign>
+              <AntDesign name="star" size={24} style={{color: '#ffcb6b'}} />
             </View>
             {this.getFavoriteIcon()}
           </View>
