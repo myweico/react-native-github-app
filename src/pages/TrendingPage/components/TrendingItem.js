@@ -17,10 +17,11 @@ export default class TrendingItem extends BaseItem {
   render() {
     const {projectModel} = this.props;
     const item = projectModel.item;
+    const itemRef = this;
     if (!item) return null;
     let description = '<p>' + item.description + '</p>';
     return (
-      <TouchableOpacity onPress={this.props.onSelect}>
+      <TouchableOpacity onPress={() => this.props.onSelect(itemRef)}>
         <View style={styles.cell_container}>
           <Text style={styles.title}>{item.fullName}</Text>
           <HTMLView

@@ -100,9 +100,21 @@ class TrendingTab extends Component {
             favoriteDao.removeFavoriteItem(item.fullName);
           }
         }}
-        onSelect={() => {
+        onSelect={itemRef => {
           this.toDetailPage({
-            projectModel: (projectModel && projectModel.item) || {},
+            projectModel: item || {},
+            isFavorite: projectModel.isFavorite,
+            handleSelect: (item, isFavorite) => {
+              if (isFavorite) {
+                favoriteDao.saveFavoriteItem(
+                  item.fullName,
+                  JSON.stringify(item),
+                );
+              } else {
+                favoriteDao.removeFavoriteItem(item.fullName);
+              }
+              itemRef.setFavoriteState(isFavorite);
+            },
           });
         }}
       />
