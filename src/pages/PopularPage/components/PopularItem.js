@@ -12,9 +12,10 @@ export default class PopularItem extends BaseItem {
   render() {
     const {projectModel} = this.props;
     const {item} = projectModel;
+    const itemRef = this;
     if (!item || !item.owner) return null;
     return (
-      <TouchableOpacity onPress={this.props.onSelect}>
+      <TouchableOpacity onPress={() => this.props.onSelect(itemRef)}>
         <View style={styles.cell_container}>
           <Text style={styles.title}>{item.full_name}</Text>
           <Text style={styles.description}>{item.description}</Text>

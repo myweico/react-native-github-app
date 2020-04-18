@@ -10,13 +10,14 @@ import BackPress from '../../components/BackPress';
 
 const GITHUB_URL = 'https://github.com/';
 
-export default class Page1 extends Component {
+export default class DetailPage extends Component {
   constructor(props) {
     super(props);
     const {navigation} = props;
     const {getParam} = navigation;
     const projectModel = getParam('projectModel');
-    console.info('projectModel', projectModel);
+    this.projectModel = projectModel;
+    this.handleParentFavorite = getParam('handleSelect');
     this.url =
       projectModel.html_url ||
       (projectModel.full_name && GITHUB_URL + projectModel.full_name) ||
@@ -32,6 +33,7 @@ export default class Page1 extends Component {
       canGoBack: false,
       url: this.url,
       title: this.title,
+      isFavorite: getParam('isFavorite', false),
     };
   }
 
@@ -53,18 +55,23 @@ export default class Page1 extends Component {
     return <BackBtn onPress={() => this.goBack()} />;
   }
 
+  handleSelect() {
+    const isFavorite = this.state.isFavorite;
+    this.setState({
+      isFavorite: !isFavorite,
+    });
+    if (typeof this.handleParentFavorite === 'function') {
+      // 调用
+      this.handleParentFavorite(this.projectModel, !isFavorite);
+    }
+  }
+
   genRightButton() {
     return (
       <View style={styles.rightButtonArea}>
-        {/* <TouchableOpacity>
+        <TouchableOpacity onPress={() => this.handleSelect()}>
           <MaterialIcons
-            name="favorite"
-            size={26}
-            style={[styles.rightButton, {color: '#ff2f2f'}]}></MaterialIcons>
-        </TouchableOpacity> */}
-        <TouchableOpacity>
-          <MaterialIcons
-            name="favorite-border"
+            name={this.state.isFavorite ? 'favorite' : 'favorite-border'}
             size={26}
             style={[styles.rightButton, {color: '#fff'}]}
           />

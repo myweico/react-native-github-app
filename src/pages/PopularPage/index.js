@@ -88,9 +88,23 @@ class PopularTab extends Component {
     return (
       <PopularItem
         projectModel={item}
-        onSelect={() => {
+        onSelect={itemRef => {
           this.toDetailPage({
             projectModel: (item && item.item) || {},
+            isFavorite: item.isFavorite,
+            handleSelect: (item, isFavorite) => {
+              if (isFavorite) {
+                favoriteDao.saveFavoriteItem(
+                  String(item.id),
+                  JSON.stringify(item),
+                );
+              } else {
+                favoriteDao.removeFavoriteItem(String(item.id));
+              }
+              // 更新当前的按钮收藏状态
+              itemRef.setFavoriteState(isFavorite);
+            },
+            type: Favorite.popular,
           });
         }}
         onFavorite={(item, isFavorite) => {
