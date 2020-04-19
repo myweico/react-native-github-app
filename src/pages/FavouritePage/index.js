@@ -12,6 +12,8 @@ import NavigationBar from '../../components/NavigationBar';
 import navigationUtil from '../../utils/navigationUtil';
 import FavoriteDao from '../../dao/FavoriteDao';
 import Favorite from '../../var/favorite';
+import EventBus from 'react-native-event-bus';
+import EventTypes from '../../var/event';
 
 const THEME_COLOR = 'red';
 const favoritePopularDao = new FavoriteDao(Favorite.popular);
@@ -34,7 +36,7 @@ class FavoriteTab extends Component {
     switch (this.storeName) {
       case 'popular':
         favoriteDao = favoritePopularDao;
-        break;;
+        break;
       case 'trending':
         favoriteDao = favoriteTrendingDao;
         break;
@@ -95,6 +97,9 @@ class FavoriteTab extends Component {
               } else {
                 favoritePopularDao.removeFavoriteItem(String(item.id));
               }
+              EventBus.getInstance().fireEvent(
+                EventTypes.favoritePopularChange,
+              );
             }}
           />
         );
@@ -112,6 +117,9 @@ class FavoriteTab extends Component {
               } else {
                 favoriteTrendingDao.removeFavoriteItem(item.fullName);
               }
+              EventBus.getInstance().fireEvent(
+                EventTypes.favoriteTrendingChange,
+              );
             }}
             onSelect={itemRef => {
               this.toDetailPage({
@@ -136,6 +144,22 @@ class FavoriteTab extends Component {
       default:
         return null;
     }
+  }
+
+  componentDidMount() {
+    // 当切换到收藏页面的时候就重新获取数据
+    EventBus.getInstance().addListener(
+      EventTypes.bottomTabChange,
+      (this.listener = ({to, from, action}) => {
+        if (to.index === 2) {
+          this.loadData();
+        }
+      }),
+    );
+  }
+
+  componentWillUnmount() {
+    EventBus.getInstance().removeListener(this.listener);
   }
 
   render() {

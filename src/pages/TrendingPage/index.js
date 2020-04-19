@@ -23,6 +23,8 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import navigationUtil from '../../utils/navigationUtil';
 import FavoriteDao from '../../dao/FavoriteDao';
 import favorite from '../../var/favorite';
+import EventBus from 'react-native-event-bus';
+import EventTypes from '../../var/event';
 
 const URL = `https://github.com/trending/`;
 const QUERY_STR = '?since=daily';
@@ -37,10 +39,32 @@ class TrendingTab extends Component {
     this.storeName = tabBarLabel;
     this.toastRef = createRef();
     this.canLoadMore = true;
+    this.favoriteChange = false;
   }
 
   componentDidMount() {
     this.loadData();
+    EventBus.getInstance().addListener(
+      EventTypes.favoriteTrendingChange,
+      (this.favoriteListener = () => {
+        this.favoriteChange = true;
+      }),
+    );
+    EventBus.getInstance().addListener(
+      EventTypes.bottomTabChange,
+      (this.barListener = ({from, to, action}) => {
+        if (to.index === 1 && this.favoriteChange === true) {
+          // 当热门的收藏变化时, 并且切换到热门标签时, 重新加载数据
+          this.loadData();
+          this.favoriteChange = false;
+        }
+      }),
+    );
+  }
+
+  componentWillUnmount() {
+    EventBus.getInstance().removeListener(EventTypes.bottomTabChange);
+    EventBus.getInstance().removeListener(EventTypes.favoriteTrendingChange);
   }
 
   loadData = ifLoadMore => {
