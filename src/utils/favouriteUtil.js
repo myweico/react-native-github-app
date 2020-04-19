@@ -3,7 +3,7 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-29 23:15:53
- * @LastEditTime: 2020-04-12 07:42:54
+ * @LastEditTime: 2020-04-18 22:48:04
  */
 
 export default class favouriteUtil {

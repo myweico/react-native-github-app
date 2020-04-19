@@ -1,61 +1,223 @@
-import React, {Component} from 'react';
-import {View, Text, Button, StyleSheet, AsyncStorage} from 'react-native';
-import {TextInput} from 'react-native-gesture-handler';
+import React, {Component, createRef} from 'react';
+import {FlatList, View, StyleSheet, RefreshControl} from 'react-native';
+import {createMaterialTopTabNavigator} from 'react-navigation-tabs';
+import {createAppContainer} from 'react-navigation';
+import NavigationUtil from '../../utils/navigationUtil';
+import {connect} from 'react-redux';
+import {onLoadFavoriteData} from '../../store/actions';
+import PopularItem from '../PopularPage/components/PopularItem';
+import TrendingItem from '../TrendingPage/components/TrendingItem';
+import Toast from 'react-native-easy-toast';
+import NavigationBar from '../../components/NavigationBar';
 import navigationUtil from '../../utils/navigationUtil';
-import moduleName from 'react'
+import FavoriteDao from '../../dao/FavoriteDao';
+import Favorite from '../../var/favorite';
 
-export default class FavouritePage extends Component {
-  state = {
-    text: '',
-    showText: '',
+const THEME_COLOR = 'red';
+const favoritePopularDao = new FavoriteDao(Favorite.popular);
+const favoriteTrendingDao = new FavoriteDao(Favorite.trending);
+
+class FavoriteTab extends Component {
+  constructor(props) {
+    super(props);
+    const {tabBarLabel} = this.props;
+    this.storeName = tabBarLabel;
+  }
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  loadData = () => {
+    const {onLoadFavoriteData} = this.props;
+    let favoriteDao;
+    switch (this.storeName) {
+      case 'popular':
+        favoriteDao = favoritePopularDao;
+        break;;
+      case 'trending':
+        favoriteDao = favoriteTrendingDao;
+        break;
+      default:
+        break;
+    }
+    onLoadFavoriteData(this.storeName, favoriteDao);
   };
 
-  save(key, text) {
-    AsyncStorage.setItem(key, text, err => {
-      console.log('in save callback');
-      err && console.log(err.toString());
-    });
+  _store() {
+    const {favorite} = this.props;
+    let store = favorite[this.storeName];
+    if (!store) {
+      store = {
+        isLoading: false,
+        projectModel: [],
+      };
+    }
+    return store;
   }
 
-  remove(key) {
-    AsyncStorage.removeItem(key)
-      .then(() => {
-        console.log('removed resolve');
-      })
-      .catch(err => {
-        console.log('remove catch', err);
-      });
+  toDetailPage(params) {
+    navigationUtil.navigate('DetailPage', params);
   }
 
-  async get(key) {
-    try {
-      const value = AsyncStorage.getItem(key);
-      this.setState({showText: value});
-      console.log('value got', value);
-    } catch (err) {
-      console.log('get error: ', err);
+  renderItem(data) {
+    const item = data.item;
+    switch (this.storeName) {
+      case 'popular':
+        return (
+          <PopularItem
+            projectModel={item}
+            onSelect={itemRef => {
+              this.toDetailPage({
+                projectModel: (item && item.item) || {},
+                isFavorite: item.isFavorite,
+                handleSelect: (item, isFavorite) => {
+                  if (isFavorite) {
+                    favoritePopularDao.saveFavoriteItem(
+                      String(item.id),
+                      JSON.stringify(item),
+                    );
+                  } else {
+                    favoritePopularDao.removeFavoriteItem(String(item.id));
+                  }
+                  // 更新当前的按钮收藏状态
+                  itemRef.setFavoriteState(isFavorite);
+                },
+                type: Favorite.popular,
+              });
+            }}
+            onFavorite={(item, isFavorite) => {
+              if (isFavorite) {
+                favoritePopularDao.saveFavoriteItem(
+                  String(item.id),
+                  JSON.stringify(item),
+                );
+              } else {
+                favoritePopularDao.removeFavoriteItem(String(item.id));
+              }
+            }}
+          />
+        );
+
+      case 'trending':
+        return (
+          <TrendingItem
+            projectModel={item}
+            onFavorite={(item, isFavorite) => {
+              if (isFavorite) {
+                favoriteTrendingDao.saveFavoriteItem(
+                  item.fullName,
+                  JSON.stringify(item),
+                );
+              } else {
+                favoriteTrendingDao.removeFavoriteItem(item.fullName);
+              }
+            }}
+            onSelect={itemRef => {
+              this.toDetailPage({
+                projectModel: (item && item.item) || {},
+                isFavorite: item.isFavorite,
+                handleSelect: (item, isFavorite) => {
+                  if (isFavorite) {
+                    favoriteTrendingDao.saveFavoriteItem(
+                      item.fullName,
+                      JSON.stringify(item),
+                    );
+                  } else {
+                    favoriteTrendingDao.removeFavoriteItem(item.fullName);
+                  }
+                  itemRef.setFavoriteState(isFavorite);
+                },
+              });
+            }}
+          />
+        );
+
+      default:
+        return null;
     }
   }
 
   render() {
-    const {navigation} = this.props;
-    const {navigate, setParams} = navigation;
+    let store = this._store();
     return (
       <View style={styles.container}>
-        <Text>收藏页</Text>
-        <Button
-          onPress={() => {
-            navigationUtil.navigate('AsyncStorageDemo');
+        <FlatList
+          data={store.projectModel}
+          renderItem={data => this.renderItem(data)}
+          keyExtractor={(item, index) => {
+            return '' + (item.item.fullName || item.item.id);
           }}
-          title="AsyncStorageDemo"
+          refreshControl={
+            <RefreshControl
+              title="Loading..."
+              titleColor={THEME_COLOR}
+              color={THEME_COLOR}
+              refreshing={store.isLoading}
+              onRefresh={this.loadData}
+              tintColor={THEME_COLOR}
+            />
+          }
         />
-        <Button
-          onPress={() => {
-            navigationUtil.navigate('DataStore');
-          }}
-          title="DataStoreDemo"
-        />
+        <Toast ref={ref => (this.toastRef = ref)} position="center" />
       </View>
+    );
+  }
+}
+
+class FavoritePage extends Component {
+  static router;
+
+  constructor(props) {
+    super(props);
+    this.tabs = ['popular', 'trending'];
+    this.tabsMap = {
+      popular: {
+        tabBarLabel: '最热',
+      },
+      trending: {
+        tabBarLabel: '趋势',
+      },
+    };
+  }
+
+  genTabBar() {
+    const routesConfig = {};
+    this.tabs.forEach((part, index) => {
+      routesConfig[`tab${index}`] = {
+        screen: props => <FavoriteTabPage {...props} tabBarLabel={part} />,
+        navigationOptions: {
+          tabBarLabel: this.tabsMap[part].tabBarLabel,
+        },
+      };
+    });
+    return createAppContainer(
+      createMaterialTopTabNavigator(routesConfig, {
+        tabBarOptions: {
+          upperCaseLabel: false,
+          labelStyle: {
+            fontSize: 14,
+            marginVertical: 6,
+          },
+          indicatorStyle: {
+            height: 2,
+            backgroundColor: '#fff',
+          },
+        },
+      }),
+    );
+  }
+
+  render() {
+    const navigationBar = <NavigationBar title="收藏" />;
+    const MatTopNav = this.genTabBar();
+    return (
+      // <SafeAreaView style={{flex: 1}}>
+      <>
+        {navigationBar}
+        <MatTopNav />
+      </>
+      // </SafeAreaView>
     );
   }
 }
@@ -66,4 +228,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  indicatorContainer: {
+    alignItems: 'center',
+  },
+  indicator: {
+    color: 'red',
+    margin: 10,
+  },
 });
+
+const mapStateToProps = state => ({
+  favorite: state.favorite,
+});
+
+const mapActionsToProps = dispatch => ({
+  onLoadFavoriteData: (flag, favoriteDao) => {
+    dispatch(onLoadFavoriteData(flag, favoriteDao));
+  },
+});
+
+const FavoriteTabPage = connect(
+  mapStateToProps,
+  mapActionsToProps,
+)(FavoriteTab);
+
+export default FavoritePage;
