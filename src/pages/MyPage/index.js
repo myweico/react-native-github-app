@@ -7,9 +7,10 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {MORE_MENU} from '../../common/MORE_MENU';
 import GlobalStyles from '../../var/GlobalStyles';
 import ViewUtil from '../../utils/ViewUtil';
+import NavigationUtil from '../../utils/navigationUtil';
 
 const THEME_COLOR = '#678';
-export default class Page3 extends Component {
+export default class MyPage extends Component {
   getLeftButton(callback) {
     return (
       <TouchableOpacity onPress={callback} style={{paddingLeft: 16}}>
@@ -26,7 +27,24 @@ export default class Page3 extends Component {
     );
   }
 
-  onClick = menu => {};
+  onClick = menu => {
+    let RouteName,
+      params = {};
+    switch (menu) {
+      case MORE_MENU.Tutorial:
+        RouteName = 'WebviewPage';
+        params.title = '教程';
+        params.url = 'https://coding.m.imooc.com/classindex.html?cid=304';
+        break;
+      case MORE_MENU.About:
+        RouteName = 'AboutPage';
+      default:
+        break;
+    }
+    if (RouteName) {
+      NavigationUtil.navigate(RouteName, params);
+    }
+  };
 
   getItem(menu) {
     return ViewUtil.getMunuItem(

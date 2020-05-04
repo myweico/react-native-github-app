@@ -3,7 +3,7 @@
  * @Author: myweico
  * @LastEditors: myweico
  * @Date: 2020-03-18 22:13:39
- * @LastEditTime: 2020-03-18 22:41:36
+ * @LastEditTime: 2020-05-04 17:26:47
  */
 import React, {Component} from 'react';
 import {TouchableOpacity, Button, ViewPropTypes} from 'react-native';
