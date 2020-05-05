@@ -38,6 +38,10 @@ export default class MyPage extends Component {
         break;
       case MORE_MENU.About:
         RouteName = 'AboutPage';
+        break;
+      case MORE_MENU.About_Author:
+        RouteName = 'AboutMePage';
+        break;
       default:
         break;
     }

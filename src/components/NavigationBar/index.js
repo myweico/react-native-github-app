@@ -8,6 +8,7 @@ import {
   StyleSheet,
   Text,
 } from 'react-native';
+import GlobalStyles from '../../var/GlobalStyles';
 
 const StatusBarShape = {
   barStyle: PropTypes.oneOf(['light-content', 'default']),
@@ -36,7 +37,7 @@ export default class NavigationBar extends Component {
       barStyle: 'light-content',
       hidden: false,
     },
-    title: '标题'
+    title: '标题',
   };
 
   getButtonElement(Button) {
@@ -46,7 +47,7 @@ export default class NavigationBar extends Component {
   render() {
     let statusBar = !this.props.statusBar.hidden ? (
       <View style={styles.statusBar}>
-        <StatusBar {...this.props.statusBar}></StatusBar>
+        <StatusBar {...this.props.statusBar} />
       </View>
     ) : null;
 
@@ -80,7 +81,7 @@ export default class NavigationBar extends Component {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#1e8bf1',
+    backgroundColor: GlobalStyles.themeColor,
   },
   navButton: {
     alignItems: 'center',
@@ -105,7 +106,7 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   statusBar: {
-    height: Platform.OS === 'ios'  ? STATUS_BAR_HEIGHT : 0,
-    backgroundColor: "#1e8bf1"
+    height: Platform.OS === 'ios' ? STATUS_BAR_HEIGHT : 0,
+    backgroundColor: GlobalStyles.themeColor,
   },
 });

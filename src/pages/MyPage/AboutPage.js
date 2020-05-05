@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, Linking} from 'react-native';
 import NavigationBar from '../../components/NavigationBar';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import Feather from 'react-native-vector-icons/Feather';
@@ -20,7 +20,7 @@ export default class AboutPage extends Component {
       {
         ...this.params,
         navigation: this.props.navigation,
-        flagAbout: FLAG_ABOUT.flag_about_me,
+        flagAbout: FLAG_ABOUT.flag_about,
       },
       data => this.setState({...data}),
     );
@@ -38,7 +38,22 @@ export default class AboutPage extends Component {
         params.title = '教程';
         params.url = 'https://coding.m.imooc.com/classindex.html?cid=304';
         break;
-
+      case MORE_MENU.About_Author:
+        RouteName = 'AboutMePage';
+        break;
+      case MORE_MENU.Feedback:
+        const url = 'mailto://myweico@qq.com';
+        Linking.canOpenURL(url)
+          .then(support => {
+            if (!support) {
+              console.log("Can't handle url: " + url);
+            } else {
+              Linking.openURL(url);
+            }
+          })
+          .catch(e => {
+            console.error('An error occured: ', e);
+          });
       default:
         break;
     }
